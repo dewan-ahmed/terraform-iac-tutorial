@@ -330,3 +330,7 @@ Be sure to delete the resources once you're done to avoid consuming unwanted bil
 ```
 
 You'll need to type in **yes** to confirm.
+
+### What did we get out of this POC?
+
+You can package the Terraform files as a blueprint for Mr. Boss and the engineering teams can use these as a standard for their cloud deployments. The first standardization comes in naming since service name is coming from a variable. The next standardization is the cloud region since different teams can choose the cloud region closer to them. However, you don't want the engineering teams to pick any plan they want and that's why the plans for the services are fixes in this blueprint. 
