@@ -159,7 +159,7 @@ terraform {
   required_providers {
     aiven = {
       source  = "aiven/aiven"
-      version = "~> 3.9.0"
+      version = "~> 4.1.0"
     }
   }
 }
@@ -182,6 +182,11 @@ variable "project_name" {
   type        = string
 }
 
+variable "cloud_region" {
+  description = "The specific cloud region to use"
+  type        = string
+}
+
 variable "db_username" {
   description = "Database administrator username"
   type        = string
@@ -200,6 +205,7 @@ variable "db_password" {
 ```
 aiven_api_token = YOUR_API_TOKEN_GOES_HERE
 project_name    = YOUR_AIVEN_PROJECT_NAME_GOES_HERE
+cloud_region    = CLOUD_REGION_BASED_ON_GEO
 db_username     = "admin"
 db_password     = "insecurepassword"
 ```
@@ -212,8 +218,8 @@ Because this is a demo, you'll be using the same database username/password for 
 // This creates the PostgreSQL service
 resource "aiven_pg" "postgres_service" {
   project                 = var.project_name
-  service_name            = "postgres-aws-us"
-  cloud_name              = "aws-us-east-1"
+  service_name            = join("-", ["postgres", var.cloud_region])
+  cloud_name              = var.cloud_region
   plan                    = "startup-4"
 }
 
@@ -235,8 +241,8 @@ resource "aiven_pg_user" "postgres_admin_user" {
 // This creates the ClickHouse service
 resource "aiven_clickhouse" "clickhouse_service" {
   project                 = var.project_name
-  service_name            = "clickhouse-aws-us"
-  cloud_name              = "aws-us-east-1"
+  service_name            = join("-", ["clickhouse", var.cloud_region])
+  cloud_name              = var.cloud_region
   plan                    = "startup-8" 
 }
 
@@ -258,9 +264,9 @@ resource "aiven_service_integration" "clickhouse_postgres_source" {
 // This creates the Redis service
 resource "aiven_redis" "redis_service" {
   project                 = var.project_name
-  cloud_name              = "aws-us-east-1"
+  cloud_name              = var.cloud_region
   plan                    = "startup-4"
-  service_name            = "redis-aws-us"
+  service_name            = join("-", ["redis", var.cloud_region])
 }
 
 // This creates the Redis admin user
@@ -317,7 +323,7 @@ The output will show you if everything worked well. You can now visit the [Aiven
 
 ### Clean up
 
-Since this was a test environment, be sure to delete the resources once you're done to avoid consuming unwanted bills. 
+Be sure to delete the resources once you're done to avoid consuming unwanted bills. 
 
 ```
     terraform destroy -var-file=variables.tfvars
