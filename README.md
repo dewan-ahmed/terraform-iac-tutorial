@@ -281,16 +281,19 @@ resource "aiven_redis_user" "redis_admin_user" {
 5. If input variables are like function argument, output values in Terraform are like function return values. Create a file called **outputs.tf** and add the following:
 
 ```
-output "postgres_connect_string" {
-  description = "Postgres database connection string"
-  value       = aiven_pg.postgres_service.service_uri
-  sensitive   = true
+output "aiven_pg_uri" {
+  value = aiven_pg.postgres_service.service_uri
+  sensitive = true
 }
 
-output "redis_connect_string" {
-  description = "Redis database connection string"
-  value       = aiven_redis.redis_service.service_uri
-  sensitive   = true
+output "aiven_clickhouse_uri" {
+  value = aiven_clickhouse.clickhouse_service.service_uri
+  sensitive = true
+}
+
+output "aiven_redis_uri" {
+  value = aiven_redis.redis_service.service_uri
+  sensitive = true
 }
 ```
 
@@ -334,3 +337,32 @@ You'll need to type in **yes** to confirm.
 ### What did we get out of this POC?
 
 You can package the Terraform files as a blueprint for Mr. Boss and the engineering teams can use these as a standard for their cloud deployments. The first standardization comes in naming since service name is coming from a variable. The next standardization is the cloud region since different teams can choose the cloud region closer to them. However, you don't want the engineering teams to pick any plan they want and that's why the plans for the services are fixes in this blueprint. 
+
+## Challenge 3: Reuse resource definitions
+
+In Terraform, a module is a container for multiple resources that can be shared across different projects. Modules allow you to organize and reuse your infrastructure code, making it easier to manage and maintain your infrastructure over time. In this section, you will help Mr. Byte Boss explore how to use modules in Terraform and enable his engineering teams to reuse resource definitions.
+
+### Create and use a module
+
+Let's create a directory called **module** and add a directory called **dev-env** under **module**. From the previous section, add all the files to **dev-env** directory except the **dev.tfvars** file. You now have a Terraform module.
+
+To use the **dev-env** module, you can create a new directory called **tf-deploy** in the same level as the **module** directory. Under **tf-deploy** directory, create an empty **main.tf** file. You'll also copy the **variables.tf** and **dev.tfvars** files from the previous section under **tf-deploy**. 
+
+Add the following to the **main.tf** file:
+
+```
+module "dev-env" {
+  source = "../modules/dev-env"
+  aiven_api_token = var.aiven_api_token
+  project_name = var.project_name
+  cloud_region = var.cloud_region
+  db_username = var.db_username
+  db_password = var.db_password
+}
+```
+
+Here, you're referencing the **dev-env** module from a local directory and reusing this module to build your services. This module could also be a remote module. You can follow the previous instructions to apply the Terraform configuration and clean up the resources afterwards.
+
+### What did we get out of this POC?
+
+With this POC, you can show Mr. Byte Boss that one of his engineering team can create a blueprint for all the services used for a development environment and other teams can reuse that blueprint in the form of a Terraform module. You also showed how variables can be used by different teams for their own environments. For example, they might choose a different cloud region for their setup which is configured using the **variables.tf** and **dev.tfvars** files for their environment.
