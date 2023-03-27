@@ -366,3 +366,7 @@ Here, you're referencing the **dev-env** module from a local directory and reusi
 ### What did we get out of this POC?
 
 With this POC, you can show Mr. Byte Boss that one of his engineering team can create a blueprint for all the services used for a development environment and other teams can reuse that blueprint in the form of a Terraform module. You also showed how variables can be used by different teams for their own environments. For example, they might choose a different cloud region for their setup which is configured using the **variables.tf** and **dev.tfvars** files for their environment.
+
+## Wrap up
+
+With these POCs, Mr. Byte Boss was able to convince all the engineering teams to move from their precious scripts to Terraform. Just kidding! It takes time, effort, and patience for any tools transition. With your help, Mr. Boss was able to show the engineering teams what are the benefits of using a declarative IaC tool over one-off shell scripts. This will, hopefully, start the mindshift to adopt Terraform as the preferred tool for multicloud large-scale cloud deployments. 
